@@ -1,18 +1,21 @@
 public class IndexOf_Method
 {
   //public static string RemoveSensitiveKeywords( string s ) { return s; }
-  public static T getObject<T>( DataRow row ) where T : new() 
-  {
-      return getObject_impl<T, DataRow[]>( new DataRow[]{ row }, row.Table, 1 )[ 0 ];
-  }
-  
-  public static List<T> getObject<T>( DataTable table ) where T : new() 
-  {
-      return getObject_impl<T, DataRowCollection>( table.Rows, table, table.Rows.Count ); 
-  }
-  
-  public static List<T> getObject_impl<T, R>( R RowContainer, DataTable ref_table, int RowCount ) where T : new() where R : IEnumerable
+    public static T getObject<T>( DataRow row ) where T : new() 
     {
+        return getObject_impl<T>( new DataRow[]{ row })[ 0 ]; 
+    }
+
+    public static List<T> getObject<T>( DataTable table ) where T : new() 
+    {
+        return getObject_impl<T>( table.AsEnumerable() ); 
+    }
+
+    public static List<T> getObject_impl<T>( IEnumerable<DataRow> RowContainer ) where T : new()
+    {
+        var ref_table = RowContainer.First().Table;
+        var RowCount = RowContainer.Count();
+        
         List<T> Result = new List<T>( RowCount );
         for( int i = 0; i < RowCount; ++i ) Result.Add( new T() );
 
